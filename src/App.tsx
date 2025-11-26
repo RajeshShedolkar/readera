@@ -123,8 +123,8 @@ const App: React.FC = () => {
       ...baseTheme,
       body: {
         ...(baseTheme.body || {}),
-        fontFamily: activeFontStack,
-        lineHeight: lineHeightValue,
+        'font-family': activeFontStack,
+        'line-height': lineHeightValue,
       },
       p: {
         ...(baseTheme.p || {}),
