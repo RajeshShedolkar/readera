@@ -5,11 +5,72 @@ import './App.css';
 type ThemeName = 'light' | 'sepia' | 'dark';
 type TocEntry = NavItem & { depth: number };
 
+// Extend FontOption type
 type FontOption = {
   id: string;
   label: string;
   stack: string;
+  style?: React.CSSProperties;
 };
+
+export const FONT_OPTIONS: FontOption[] = [
+  {
+    id: 'reader-sans',
+    label: 'Clean Sans',
+    stack:
+      '"Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif',
+    style: {
+      lineHeight: 1.7,
+      letterSpacing: '0.3px',
+      fontSize: '18px',
+    },
+  },
+  {
+    id: 'reader-serif',
+    label: 'Bookish Serif',
+    stack: '"Literata", "Merriweather", "Georgia", "Times New Roman", serif',
+    style: {
+      lineHeight: 1.8,
+      letterSpacing: '0.2px',
+      fontSize: '19px',
+    },
+  },
+  {
+    id: 'editorial-serif',
+    label: 'Editorial Serif',
+    stack: '"Newsreader", "Iowan Old Style", "Baskerville", serif',
+    style: {
+      lineHeight: 1.8,
+      fontSize: '18px',
+    },
+  },
+  {
+    id: 'mono',
+    label: 'Mono',
+    stack: '"IBM Plex Mono", "Source Code Pro", "SFMono-Regular", monospace',
+    style: {
+      lineHeight: 1.6,
+      fontSize: '16px',
+    },
+  },
+
+  // 🌿 New: Multi-language (English + Marathi + Hindi)
+  {
+    id: 'reader-devanagari',
+    label: 'Harmony (English + Marathi + Hindi)',
+    stack: 'kalam',
+    style: {
+      backgroundColor: '#f6e4ca',
+      color: '#5c4632',
+      lineHeight: 1.8,
+      letterSpacing: '0.75px',
+      fontSize: '18px',
+      padding: '32px',
+      borderRadius: '12px',
+    },
+  },
+];
+
 
 const mediaStyles = (captionColor: string) => ({
   'img, svg, image, figure': {
@@ -49,30 +110,6 @@ const readerThemes: Record<ThemeName, Record<string, any>> = {
     ...mediaStyles('#94a3b8'),
   },
 };
-
-const FONT_OPTIONS: FontOption[] = [
-  {
-    id: 'reader-sans',
-    label: 'Clean Sans',
-    stack:
-      '"Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif',
-  },
-  {
-    id: 'reader-serif',
-    label: 'Bookish Serif',
-    stack: '"Literata", "Merriweather", "Georgia", "Times New Roman", serif',
-  },
-  {
-    id: 'editorial-serif',
-    label: 'Editorial Serif',
-    stack: '"Newsreader", "Iowan Old Style", "Baskerville", serif',
-  },
-  {
-    id: 'mono',
-    label: 'Mono',
-    stack: '"IBM Plex Mono", "Source Code Pro", "SFMono-Regular", monospace',
-  },
-];
 
 const CUSTOM_FONT_ID = 'custom';
 const DEFAULT_FONT_STACK = FONT_OPTIONS[0].stack;
@@ -121,19 +158,48 @@ const App: React.FC = () => {
     const baseTheme = readerThemes[theme] || readerThemes.light;
     return {
       ...baseTheme,
+      // Global resets for the iframe content
+      'html, body': {
+        'margin': '0 !important',
+        'padding': '0 !important',
+        'max-width': '100% !important',
+        'overflow-x': 'hidden !important',
+      },
       body: {
         ...(baseTheme.body || {}),
         'font-family': activeFontStack,
         'line-height': lineHeightValue,
+        'padding': '0 20px !important', // Add safe horizontal padding
+        'box-sizing': 'border-box !important',
       },
       p: {
         ...(baseTheme.p || {}),
         lineHeight: lineHeightValue,
+        'font-family': activeFontStack,
+        'font-size': '1em !important',
+        'margin-bottom': '1em !important',
       },
       li: {
         ...(baseTheme.li || {}),
         lineHeight: lineHeightValue,
+        'font-family': activeFontStack,
       },
+      // Targeted fixes for responsive content
+      'img, svg, video, object': {
+        'max-width': '100% !important',
+        'height': 'auto !important',
+        'box-sizing': 'border-box !important',
+      },
+      // Fix tables overflowing
+      'table': {
+        'max-width': '100% !important',
+        'table-layout': 'fixed !important',
+      },
+      // Ensure text containers don't overflow
+      'div, span, p, section, article': {
+        'max-width': '100% !important',
+        'box-sizing': 'border-box !important',
+      }
     };
   }, [theme, activeFontStack, lineHeightValue]);
 
